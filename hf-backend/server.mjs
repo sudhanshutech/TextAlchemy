@@ -1,36 +1,38 @@
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import fetch from 'node-fetch';
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const app = express();
 const port = 5000;
 
+// Middleware setup
 app.use(cors());
 app.use(bodyParser.json());
 
-const apiKey = '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'; // Replace with your API key
-const modelUrl = 'https://huggingface.co/openai-community/gpt2'; // Example model
+// Set up Google Generative AI
+const apiKey = process.env.GOOGLE_API_KEY;
+const genAI = new GoogleGenerativeAI(apiKey);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-app.post('/generate', async (req, res) => {
+app.post("/generate", async (req, res) => {
   const { text, style } = req.body;
 
-  try {
-    const response = await fetch(modelUrl, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ inputs: `${style}: ${text}` }),
-    });
+  if (!text || !style) {
+    return res.status(400).json({ error: "Text and style are required." });
+  }
 
-    const data = await response.json();
-    res.json(data);
+  console.log(`Received text: ${text}, style: ${style}`);
+
+  try {
+    const prompt = `Style this text in ${style}: ${text}`;
+    const result = await model.generateContent(prompt);
+
+    const styledText = result.response.text().trim();
+    res.json({ styled_text: styledText });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'An error occurred while processing the request.' });
+    console.error("Error from Google Gemini API:", error.message);
+    res.status(500).json({ error: "An error occurred while processing the request." });
   }
 });
 

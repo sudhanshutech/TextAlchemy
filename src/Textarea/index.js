@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button } from '@mui/material';
+import { Button, Typography, Card, CardContent, Avatar } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import CircularProgress from '@mui/material/CircularProgress';
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
 
 const InputTextArea = () => {
   const [text, setText] = useState('');
@@ -34,7 +35,7 @@ const InputTextArea = () => {
       if (data.error) {
         setResult('Error: ' + data.error);
       } else {
-        setResult(data.generated_text || 'No response from model.');
+        setResult(data.styled_text || 'No response from model.');
       }
     } catch (error) {
       setResult('Error: ' + error.message);
@@ -52,6 +53,8 @@ const InputTextArea = () => {
         alignItems: 'center',
         gap: 2,
         mt: 4,
+        width: '80%',
+        margin: '0 auto',
       }}
       noValidate
       autoComplete="off"
@@ -78,6 +81,7 @@ const InputTextArea = () => {
           <MenuItem value="Angry">Angry</MenuItem>
           <MenuItem value="Flirty">Flirty</MenuItem>
           <MenuItem value="Shakespeare">Shakespeare</MenuItem>
+          <MenuItem value="Casual">Casual</MenuItem>
         </Select>
       </FormControl>
 
@@ -86,8 +90,14 @@ const InputTextArea = () => {
         color="primary"
         onClick={handleSubmit}
         disabled={loading}
+        sx={{
+          padding: '10px 20px',
+          fontSize: '16px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+        }}
       >
-        {loading ? <CircularProgress size={24} color="inherit" /> : 'Submit'}
+        {loading ? <CircularProgress size={24} color="inherit" /> : 'Generate Style'}
       </Button>
 
       <Box
@@ -96,13 +106,60 @@ const InputTextArea = () => {
           p: 2,
           width: '100%',
           minHeight: '10rem',
-          background: '#f4f4f4',
-          borderRadius: '4px',
+          background: '#f0f8ff',
+          borderRadius: '8px',
+          boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
           overflowY: 'auto',
         }}
       >
-        <strong>Output:</strong>
-        <p>{loading ? 'Loading...' : result}</p>
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{
+            textAlign: 'center',
+            fontWeight: 'bold',
+            color: '#1976d2',
+            mb: 0,
+          }}
+        >
+          Output
+        </Typography>
+
+        {loading ? (
+          <Typography variant="body1" align="center">
+            Loading...
+          </Typography>
+        ) : result ? (
+          result.split('\n').map((line, index) => (
+            <Card
+              key={index}
+              sx={{
+                mb: 2,
+                backgroundColor: '#e3f2fd',
+                borderRadius: '12px',
+                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)',
+                overflow: 'hidden',
+              }}
+            >
+              <CardContent
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2,
+                }}
+              >
+                <Avatar sx={{ bgcolor: '#1976d2' }}>
+                  <SentimentVerySatisfiedIcon />
+                </Avatar>
+                <Typography variant="body1">{line.trim()}</Typography>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <Typography variant="body1" color="text.secondary">
+            No output generated.
+          </Typography>
+        )}
       </Box>
     </Box>
   );
