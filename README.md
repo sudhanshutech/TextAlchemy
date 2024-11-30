@@ -4,7 +4,8 @@
 
 **TextAlchemy** is an innovative web application that transforms your plain text into styled expressions using cutting-edge generative AI models. Whether you need a humorous twist, Shakespearean flair, or a flirty tone, TextAlchemy turns ordinary phrases into extraordinary conversations.  
 
-![TextAlchemy Screenshot](#) <!-- Add a screenshot link here -->
+![image](https://github.com/user-attachments/assets/5777cfb0-d184-4c08-a914-15758d5bb55a)
+
 
 ## Features 🚀  
 - 🌟 **Style Selector**: Choose from multiple styles like *Humor*, *Angry*, *Flirty*, *Casual*, or *Shakespearean*.  
